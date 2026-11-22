@@ -72,7 +72,7 @@ export default function ProjectCard({ project, index, onOpen, className = "" }) 
         rotateY: springRotateY,
         transformPerspective: 1000,
       }}
-      className={`card-beam group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card outline-none transition-[border-color,box-shadow] duration-300 focus-visible:ring-2 focus-visible:ring-emerald-400/60 hover:border-emerald-400/25 hover:shadow-glow-sm ${className} ${
+      className={`card-beam group relative flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card outline-none transition-[border-color,box-shadow] duration-300 focus-visible:ring-2 focus-visible:ring-emerald-400/60 hover:border-emerald-400/25 hover:shadow-glow-sm ${className} ${
         featured ? "lg:grid lg:grid-cols-2" : ""
       }`}
     >
@@ -100,7 +100,7 @@ export default function ProjectCard({ project, index, onOpen, className = "" }) 
           featured ? "border-b lg:border-b-0 lg:border-r" : "border-b"
         }`}
       >
-        <div className="aspect-[16/10] min-h-[240px] transition-transform duration-700 ease-out group-hover:scale-[1.025]">
+        <div className="aspect-[16/10] min-h-[150px] transition-transform duration-700 ease-out group-hover:scale-[1.025] sm:min-h-[240px]">
           <ProjectMockup type={project.mockup} />
         </div>
       </div>

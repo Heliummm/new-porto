@@ -47,12 +47,12 @@ export default function Projects() {
 
         {/* Projects Grid */}
         {filteredProjects.length > 0 ? (
-          <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             {filteredProjects.map((project, i) => (
               <Reveal
                 key={project.id}
                 delay={0.06 * i}
-                className={project.featured ? "lg:col-span-2" : ""}
+                className={`min-w-0 ${project.featured ? "lg:col-span-2" : ""}`}
               >
                 <ProjectCard
                   project={project}
