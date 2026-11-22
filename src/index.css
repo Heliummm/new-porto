@@ -1,0 +1,372 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* ===== Tema via CSS variables =====
+     Dark (default) & light mode — flip nilai variabel di html.light. */
+  :root {
+    --c-base-rgb: 10 10 12;
+    --c-surface-rgb: 14 14 17;
+    --c-card-rgb: 19 19 22;
+    --c-raised-rgb: 26 26 31;
+  }
+  html.light {
+    --c-base-rgb: 250 250 250;
+    --c-surface-rgb: 244 244 245;
+    --c-card-rgb: 255 255 255;
+    --c-raised-rgb: 237 237 240;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    scrollbar-gutter: stable; /* cegah layout "melompat" saat modal buka/tutup */
+  }
+
+  body {
+    @apply bg-base font-sans text-zinc-300 antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    @apply bg-emerald-400/25 text-emerald-50;
+  }
+
+  /* Subtle custom scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #27272a transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-zinc-800;
+    border: 2px solid #0a0a0c;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-700;
+  }
+}
+
+@layer utilities {
+  /* Subtle grid background */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Fade the grid towards the bottom */
+  .mask-fade-bottom {
+    -webkit-mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 45%, transparent 100%);
+  }
+
+  /* Radial mask for hero grid */
+  .mask-radial {
+    -webkit-mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 65% at 50% 35%, black 40%, transparent 100%);
+  }
+
+  /* Film-grain noise texture (very subtle) */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  }
+
+  /* Grid yang bergerak turun secara halus & seamless */
+  .bg-grid-animated {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    animation: grid-move 6s linear infinite;
+  }
+
+  /* Shine sweep pada tombol primary saat hover */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(16, 185, 129, 0.35) 50%,
+      transparent 60%
+    );
+    transform: translateX(-130%);
+    transition: transform 0.7s ease;
+    pointer-events: none;
+  }
+  .btn-shine:hover::after {
+    transform: translateX(130%);
+  }
+
+  /* Beam gradient mengelilingi border card saat hover */
+  .card-beam::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(52, 211, 153, 0.7) 50%,
+      transparent 70%
+    );
+    background-size: 250% 100%;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    animation: card-beam-move 2.6s linear infinite;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .card-beam:hover::before {
+    opacity: 1;
+  }
+
+  @keyframes grid-move {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 0 56px;
+    }
+  }
+
+  @keyframes card-beam-move {
+    to {
+      background-position: -250% 0;
+    }
+  }
+
+  /* Scrollbar modal — lebih halus & premium dari scrollbar global */
+  .modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #3f3f46 transparent;
+  }
+  .modal-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+  .modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .modal-scroll::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: #3f3f46;
+  }
+  .modal-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: #52525b;
+  }
+
+  /* Preview mockup di modal diatur lewat komponen <PreviewFit />:
+     canvas desain 280px di-scale via transform sesuai tinggi viewport.
+     (Dihapus dari CSS: pendekatan zoom + h-full terbukti rapuh.) */
+
+  /* Viewport height yang adaptif terhadap UI browser (URL bar mobile).
+     100svh = tinggi viewport terkecil yang stabil; fallback 100vh. */
+  .min-h-safe-view {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom cursor — class ditambahkan lewat JS oleh komponen <Cursor />,
+   hanya untuk pointer presisi (mouse/trackpad). */
+@media (pointer: fine) {
+  html.custom-cursor,
+  html.custom-cursor * {
+    cursor: none !important;
+  }
+  html.custom-cursor input,
+  html.custom-cursor textarea {
+    cursor: text !important;
+  }
+}
+
+/* ============================================================
+   LIGHT MODE
+   Prinsip: dark tetap default. html.light membalik palet:
+   - Latar/base/card via CSS variables (sudah di @layer base)
+   - Teks, border, dan bg putih-transparan di-override di bawah
+   - Elemen dekoratif [aria-hidden] (mockup, code card, partikel)
+     TETAP memakai palet gelap aslinya — seperti screenshot app dark
+   ============================================================ */
+html.light {
+  color-scheme: light;
+}
+
+/* ---- Teks netral ---- */
+html.light .text-white { color: #18181b; }
+html.light .text-zinc-100 { color: #27272a; }
+html.light .text-zinc-200 { color: #333338; }
+html.light .text-zinc-300 { color: #3f3f46; }
+html.light .text-zinc-400 { color: #52525b; }
+html.light .text-zinc-500 { color: #6f6f77; }
+html.light .text-zinc-600 { color: #8d8d95; }
+html.light .text-zinc-700 { color: #b3b3bc; }
+html.light .text-zinc-950 { color: #fafafa; }
+html.light body { color: #3f3f46; }
+
+/* ---- Teks aksen — versi lebih gelap agar kontras di latar terang ---- */
+html.light .text-emerald-100 { color: #065f46; }
+html.light .text-emerald-200 { color: #047857; }
+html.light .text-emerald-300 { color: #059669; }
+html.light .text-emerald-400 { color: #047857; }
+html.light .text-amber-100 { color: #78350f; }
+html.light .text-amber-200 { color: #92400e; }
+html.light .text-amber-300 { color: #b45309; }
+html.light .text-sky-200 { color: #0369a1; }
+html.light .text-sky-300 { color: #0284c7; }
+html.light .text-red-200 { color: #991b1b; }
+html.light .text-red-300 { color: #b91c1c; }
+html.light .text-red-400 { color: #dc2626; }
+html.light .text-emerald-100\/90 { color: #065f46; }
+html.light .text-sky-100\/90 { color: #075985; }
+html.light .text-amber-100\/90 { color: #78350f; }
+html.light .text-emerald-300\/90 { color: #059669; }
+html.light .text-amber-300\/90 { color: #b45309; }
+html.light .text-emerald-400\/80 { color: #059669; }
+
+/* ---- Hover teks ---- */
+html.light .hover\:text-zinc-100:hover { color: #18181b; }
+html.light .hover\:text-zinc-300:hover { color: #27272a; }
+html.light .hover\:text-white:hover { color: #0a0a0c; }
+html.light .hover\:text-emerald-200:hover { color: #047857; }
+html.light .hover\:text-emerald-300:hover { color: #059669; }
+html.light .group:hover .group-hover\:text-emerald-100 { color: #065f46; }
+
+/* ---- Border putih -> gelap ---- */
+html.light .border-white\/10 { border-color: rgba(0, 0, 0, 0.12); }
+html.light .border-white\/15 { border-color: rgba(0, 0, 0, 0.16); }
+html.light .border-white\/25 { border-color: rgba(0, 0, 0, 0.22); }
+html.light .border-white\/\[0\.05\] { border-color: rgba(0, 0, 0, 0.07); }
+html.light .border-white\/\[0\.06\] { border-color: rgba(0, 0, 0, 0.08); }
+html.light .border-white\/\[0\.07\] { border-color: rgba(0, 0, 0, 0.1); }
+html.light .border-white\/\[0\.08\] { border-color: rgba(0, 0, 0, 0.12); }
+html.light .hover\:border-white\/40:hover { border-color: rgba(0, 0, 0, 0.35); }
+
+/* ---- BG putih-transparan -> hitam-transparan ---- */
+html.light .bg-white\/10 { background-color: rgba(0, 0, 0, 0.06); }
+html.light .bg-white\/15 { background-color: rgba(0, 0, 0, 0.08); }
+html.light .bg-white\/\[0\.02\] { background-color: rgba(0, 0, 0, 0.02); }
+html.light .bg-white\/\[0\.03\] { background-color: rgba(0, 0, 0, 0.03); }
+html.light .bg-white\/\[0\.04\] { background-color: rgba(0, 0, 0, 0.04); }
+html.light .bg-white\/\[0\.05\] { background-color: rgba(0, 0, 0, 0.05); }
+html.light .bg-white\/\[0\.06\] { background-color: rgba(0, 0, 0, 0.06); }
+html.light .bg-white\/\[0\.07\] { background-color: rgba(0, 0, 0, 0.07); }
+html.light .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.04); }
+html.light .hover\:bg-white\/\[0\.04\]:hover { background-color: rgba(0, 0, 0, 0.03); }
+html.light .hover\:bg-white\/\[0\.08\]:hover { background-color: rgba(0, 0, 0, 0.06); }
+
+/* ---- BG hitam-transparan (input form) -> sangat tipis ---- */
+html.light .bg-black\/30 { background-color: rgba(0, 0, 0, 0.04); }
+
+/* ---- Elemen putih solid (tombol utama) -> gelap ---- */
+html.light .bg-white { background-color: #18181b; }
+html.light .hover\:bg-zinc-200:hover { background-color: #27272a; }
+html.light .btn-shine { background-color: #18181b; color: #fafafa; }
+html.light .btn-shine:hover { background-color: #27272a; }
+html.light .btn-shine::after {
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.25) 50%, transparent 60%);
+}
+
+/* ---- Grid background ---- */
+html.light .bg-grid,
+html.light .bg-grid-animated {
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.055) 1px, transparent 1px);
+}
+
+/* ---- Shell mockup di card & modal tetap gelap ---- */
+html.light .mockup-shell {
+  background: linear-gradient(to bottom right, #1c1c21, #0a0a0c);
+}
+
+/* ---- Scrollbar & selection ---- */
+html.light * { scrollbar-color: #d4d4d8 transparent; }
+html.light ::-webkit-scrollbar-thumb {
+  background-color: #d4d4d8;
+  border-color: #fafafa;
+}
+html.light ::-webkit-scrollbar-thumb:hover { background-color: #a1a1aa; }
+html.light ::selection {
+  background-color: rgba(16, 185, 153, 0.22);
+  color: #064e3b;
+}
+
+/* ---- REVERT: subtree dekoratif [aria-hidden] tetap palet gelap asli
+        (mockup project, code card hero, partikel — agar tampak seperti
+        screenshot aplikasi dark di atas halaman terang) ---- */
+html.light [aria-hidden="true"] .text-white { color: #fff; }
+html.light [aria-hidden="true"] .text-zinc-100 { color: rgb(244 244 245); }
+html.light [aria-hidden="true"] .text-zinc-200 { color: rgb(228 228 231); }
+html.light [aria-hidden="true"] .text-zinc-300 { color: rgb(212 212 216); }
+html.light [aria-hidden="true"] .text-zinc-400 { color: rgb(161 161 170); }
+html.light [aria-hidden="true"] .text-zinc-500 { color: rgb(113 113 122); }
+html.light [aria-hidden="true"] .text-zinc-600 { color: rgb(82 82 91); }
+html.light [aria-hidden="true"] .text-zinc-700 { color: rgb(63 63 73); }
+html.light [aria-hidden="true"] .text-zinc-950 { color: rgb(9 9 11); }
+html.light [aria-hidden="true"] .text-emerald-100 { color: rgb(209 250 229); }
+html.light [aria-hidden="true"] .text-emerald-200 { color: rgb(167 243 208); }
+html.light [aria-hidden="true"] .text-emerald-300 { color: rgb(110 231 183); }
+html.light [aria-hidden="true"] .text-emerald-400 { color: rgb(52 211 153); }
+html.light [aria-hidden="true"] .text-amber-100 { color: rgb(254 243 199); }
+html.light [aria-hidden="true"] .text-amber-200 { color: rgb(253 230 138); }
+html.light [aria-hidden="true"] .text-amber-300 { color: rgb(252 211 77); }
+html.light [aria-hidden="true"] .text-sky-200 { color: rgb(186 230 253); }
+html.light [aria-hidden="true"] .text-sky-300 { color: rgb(125 211 252); }
+html.light [aria-hidden="true"] .text-red-200 { color: rgb(254 202 202); }
+html.light [aria-hidden="true"] .text-red-300 { color: rgb(252 165 165); }
+html.light [aria-hidden="true"] .text-red-400 { color: rgb(248 113 113); }
+html.light [aria-hidden="true"] .text-emerald-300\/90 { color: rgb(110 231 183 / 0.9); }
+html.light [aria-hidden="true"] .text-amber-300\/90 { color: rgb(252 211 77 / 0.9); }
+html.light [aria-hidden="true"] .text-violet-300\/90 { color: rgb(196 181 253 / 0.9); }
+html.light [aria-hidden="true"] .border-white\/10 { border-color: rgba(255, 255, 255, 0.1); }
+html.light [aria-hidden="true"] .border-white\/15 { border-color: rgba(255, 255, 255, 0.15); }
+html.light [aria-hidden="true"] .border-white\/25 { border-color: rgba(255, 255, 255, 0.25); }
+html.light [aria-hidden="true"] .border-white\/\[0\.05\] { border-color: rgba(255, 255, 255, 0.05); }
+html.light [aria-hidden="true"] .border-white\/\[0\.06\] { border-color: rgba(255, 255, 255, 0.06); }
+html.light [aria-hidden="true"] .border-white\/\[0\.07\] { border-color: rgba(255, 255, 255, 0.07); }
+html.light [aria-hidden="true"] .border-white\/\[0\.08\] { border-color: rgba(255, 255, 255, 0.08); }
+html.light [aria-hidden="true"] .bg-white { background-color: #fff; }
+html.light [aria-hidden="true"] .bg-white\/10 { background-color: rgba(255, 255, 255, 0.1); }
+html.light [aria-hidden="true"] .bg-white\/15 { background-color: rgba(255, 255, 255, 0.15); }
+html.light [aria-hidden="true"] .bg-white\/\[0\.02\] { background-color: rgba(255, 255, 255, 0.02); }
+html.light [aria-hidden="true"] .bg-white\/\[0\.03\] { background-color: rgba(255, 255, 255, 0.03); }
+html.light [aria-hidden="true"] .bg-white\/\[0\.04\] { background-color: rgba(255, 255, 255, 0.04); }
+html.light [aria-hidden="true"] .bg-white\/\[0\.05\] { background-color: rgba(255, 255, 255, 0.05); }
+html.light [aria-hidden="true"] .bg-white\/\[0\.06\] { background-color: rgba(255, 255, 255, 0.06); }
+html.light [aria-hidden="true"] .bg-white\/\[0\.07\] { background-color: rgba(255, 255, 255, 0.07); }
+html.light [aria-hidden="true"] .bg-black\/30 { background-color: rgba(0, 0, 0, 0.3); }
+html.light [aria-hidden="true"] .bg-black\/40 { background-color: rgba(0, 0, 0, 0.4); }

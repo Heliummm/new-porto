@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Terapkan tema SEBELUM render untuk menghindari flash (FOUC).
+      // Default: dark. Light dipakai jika user memilihnya, atau OS di-set light.
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "light" || (!t && window.matchMedia("(prefers-color-scheme: light)").matches)) {
+            document.documentElement.classList.add("light");
+          }
+        } catch (e) {}
+      })();
+    </script>
+
+    <!-- Primary SEO -->
+    <title>Muhammad Daffa Aldyananta — Full Stack Developer</title>
+    <meta
+      name="description"
+      content="Portfolio of Muhammad Daffa Aldyananta, a Full Stack Developer focused on building web applications, developing efficient systems, integrating APIs, and transforming ideas into functional digital solutions."
+    />
+    <meta name="author" content="Muhammad Daffa Aldyananta" />
+    <meta name="theme-color" content="#0a0a0c" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Muhammad Daffa Aldyananta — Full Stack Developer" />
+    <meta
+      property="og:description"
+      content="Full Stack Developer focused on building web applications, developing efficient systems, integrating APIs, and transforming ideas into functional digital solutions."
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Muhammad Daffa Aldyananta — Full Stack Developer" />
+    <meta
+      name="twitter:description"
+      content="Full Stack Developer focused on building web applications, developing efficient systems, integrating APIs, and transforming ideas into functional digital solutions."
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
